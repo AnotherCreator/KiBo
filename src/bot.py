@@ -17,8 +17,8 @@ bot = lightbulb.BotApp(
 tasks.load(bot)
 
 # ----------  LOAD EXTENSIONS   ---------- #
-bot.load_extensions("modules.cat_facts")
-bot.load_extensions("modules.help")
+# bot.load_extensions("modules.cat_facts")
+# bot.load_extensions("modules.help")
 bot.load_extensions("modules.market")
 bot.load_extensions("modules.dictionary")
 
@@ -31,7 +31,7 @@ if __name__ == '__main__':
     @bot.command
     @lightbulb.command("input", "response!")
     @lightbulb.implements(lightbulb.SlashCommand)
-    async def ping(ctx):
+    async def ping(ctx: lightbulb.Context) -> None:
         await ctx.respond("response!")
 
     # ----------    BACKGROUND TASKS    ---------- #

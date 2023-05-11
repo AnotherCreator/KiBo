@@ -123,6 +123,8 @@ def update_coins():
     except (ConnectionError, Timeout, TooManyRedirects) as e:
         print(e)
 
+# ----------    LOGGING HELPER FUNCTIONS  ---------- #
+
 
 # ----------    BOT COMMANDS    ---------- #
 @plugin.command

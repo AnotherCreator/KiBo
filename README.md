@@ -1,1 +1,1 @@
-# Discord_KiBo_Bot
+# KiBo - An Interactive Discord Bot
