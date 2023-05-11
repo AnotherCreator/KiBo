@@ -1,10 +1,13 @@
 import hikari
 import json
 import lightbulb
+import logging
 import os
 import psycopg2 as psycopg2
 from requests import Session
 from requests.exceptions import ConnectionError, Timeout, TooManyRedirects
+
+logger = logging.getLogger()
 
 # ----------    BOT OBJECTS    ---------- #
 plugin = lightbulb.Plugin("market")  # Create plugin
@@ -43,9 +46,14 @@ con = psycopg2.connect(
 )
 cur = con.cursor()
 
-
 # ----------    DATABASE FUNCTIONS  ---------- #
-# Run once to initialize database and cache coins
+"""
+def cache_coins():
+
+This function is only used once and will instantiate all the coins within the PostgreSQL database
+This should not be run during bot start in bot.py
+Once the coin data has be initialized in the database, you can remove the function call and update_coins() will take over
+"""
 def cache_coins():
     try:
         id_list = []
@@ -89,7 +97,12 @@ def cache_coins():
     except (ConnectionError, Timeout, TooManyRedirects) as e:
         print(e)
 
+"""
+def update_coins():
 
+This function will just update all the coin values inside the database on a set interval defined within bot.py 
+refresh_coins() function
+"""
 def update_coins():
     try:
         coin_response = session.get(api_data, params=coin_parameters)
@@ -115,17 +128,18 @@ def update_coins():
 @plugin.command
 @lightbulb.command("market", "Display coin info")
 @lightbulb.implements(lightbulb.SlashCommandGroup)
-async def top_coins(ctx):
+async def coins(ctx: lightbulb.Context) -> None:
     pass
 
 
-@top_coins.child  # Fetch coin info via coin ranking #
+@coins.child()  # Fetch coin info via coin ranking #
 @lightbulb.option("number", "Displays current coin info for the ranked coin",
-                  type=int, required=False, min_value=0, max_value=100, default=1)
-@lightbulb.option("name", "Displays current coin info for the ranked coin", type=str, required=False, default="Bitcoin")
+                  type=int, required=False, min_value=0, max_value=100, default=None)
+@lightbulb.option("name", "Displays current coin info for the ranked coin",
+                  type=str, required=False, default=None)
 @lightbulb.command("rank", "Enter a coin rank")
 @lightbulb.implements(lightbulb.SlashSubCommand)
-async def top_coins_rank(ctx):
+async def coin_rank(ctx: lightbulb.Context) -> None:
     # Database
     cur.execute("SELECT * FROM coin_info ORDER BY coin_rank asc")
     rows = cur.fetchall()
@@ -135,9 +149,13 @@ async def top_coins_rank(ctx):
 
     embed = hikari.Embed()
     if coin_number is not None:
+        logger.info(f"User entered a coin rank: {coin_number}")
+
         for x in rows:
             # ID: x[0] || Name: x[1] || Symbol: x[2] || Price: x[3] || Rank: x[4] || Change: x[5] || Logo: x[6]
             if x[4] == coin_number:
+                logger.info(f"Database entry found: {x[0], x[1], x[2], x[3], x[4], x[5]}")
+                logger.info(f"Match found: (User input: {coin_number})(Database: {x[1]})")
                 embed = (
                     hikari.Embed(
                         title=f"${str(x[3])}"
@@ -153,9 +171,13 @@ async def top_coins_rank(ctx):
                     )
                 )
     if coin_name is not None:
+        logger.info(f"User entered a coin name: {coin_name}")
+
         for x in rows:
             # ID: x[0] || Name: x[1] || Symbol: x[2] || Price: x[3] || Rank: x[4] || Change: x[5] || Logo: x[6]
             if x[1].lower() == coin_name.lower():
+                logger.info(f"Database entry found: {x[0], x[1], x[2], x[3], x[4], x[5]}")
+                logger.info(f"Match found: (User input: {coin_number})(Database: {x[1]})")
                 embed = (
                     hikari.Embed(
                         title=f"${str(x[3])}"
@@ -173,19 +195,16 @@ async def top_coins_rank(ctx):
     await ctx.respond(embed)
 
 
-@top_coins.child  # Fetch top 10 coins respective to user input (50 ==> 40...50)
+@coins.child()  # Fetch top 10 coins respective to user input (50 ==> 40...50)
 @lightbulb.option("top", "Displays the top 10 coins of the respective rank", type=int, required=False, default=10)
 @lightbulb.command("list", "Enter a coin rank")
 @lightbulb.implements(lightbulb.SlashSubCommand)
-async def top_coins_list(ctx):
+async def coin_list(ctx: lightbulb.Context) -> None:
     # Database
     cur.execute('SELECT * FROM coin_info ORDER BY coin_rank asc')  # 1,2,3...,100
     rows = cur.fetchall()
 
     rank = ctx.options.top
-
-    rank = int(rank)
-
     if rank < 11:
         current_min = 1
         current_max = 10
