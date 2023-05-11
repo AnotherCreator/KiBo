@@ -21,6 +21,7 @@ bot.load_extensions("modules.cat_facts")
 bot.load_extensions("modules.help")
 bot.load_extensions("modules.market")
 bot.load_extensions("modules.rich_presence")
+bot.load_extensions("modules.dictionary")
 
 # Extensions must be loaded before importing from those specific modules
 from src.modules.market import update_coins
@@ -42,5 +43,5 @@ if __name__ == '__main__':
         print("Coins successfully updated")
 
     # ----------    RUN BOT & TASKS    ---------- #
-    # refresh_coins.start()
+    # refresh_coins.start()  # Comment out when testing new modules to prevent API usage
     bot.run()
