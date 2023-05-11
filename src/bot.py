@@ -20,7 +20,6 @@ tasks.load(bot)
 bot.load_extensions("modules.cat_facts")
 bot.load_extensions("modules.help")
 bot.load_extensions("modules.market")
-bot.load_extensions("modules.rich_presence")
 bot.load_extensions("modules.dictionary")
 
 # Extensions must be loaded before importing from those specific modules
