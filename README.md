@@ -25,6 +25,7 @@ to track and display the top 100 cryptocurrencies.
     - [ ] Personal 'portfolio' of simulated gains and losses of coins you 'own.'
     - [ ] Ability to buy/sell/trade coins based on current data
     - [ ] Interaction between users with their coins
+- [ ] Integration with "traditional" stock data
 - [ ] Crypto coin tracking (Heroku database)
 - [ ] Server leveling (Heroku database)
 - [ ] Server economy (Heroku database)
