@@ -16,7 +16,7 @@ to track and display the top 100 cryptocurrencies.
 # Features
 ### Current Features
 #### Infotainment
-- [x] Crypto coin tracking (PostgreSQL + CoinMarketCap API)
+- [x] Crypto coin tracking (Local PostgreSQL DB + CoinMarketCap API)
 - [x] Dictionary functionality (PyDictionary)
 
 ### Future Features
