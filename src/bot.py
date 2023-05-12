@@ -27,13 +27,6 @@ from src.modules.market import update_coins
 
 # ----------     MAIN LINE      ---------- #
 if __name__ == '__main__':
-    # ----------    BOT COMMANDS    ---------- #
-    @bot.command
-    @lightbulb.command("input", "response!")
-    @lightbulb.implements(lightbulb.SlashCommand)
-    async def ping(ctx: lightbulb.Context) -> None:
-        await ctx.respond("response!")
-
     # ----------    BACKGROUND TASKS    ---------- #
     # Update coin database to reflect 5-min changes
     @tasks.task(s=300)
@@ -45,5 +38,5 @@ if __name__ == '__main__':
     # refresh_coins.start()  # Comment out when testing new modules to prevent API usage
     bot.run(
         activity=hikari.Activity(
-            name=f"My Developer", type=hikari.ActivityType.WATCHING)
+            name=f"iTakeDonations", type=hikari.ActivityType.WATCHING)
     )
