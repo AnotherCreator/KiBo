@@ -27,6 +27,7 @@ def create_dictionary_embed(user_input, dictionary_results) -> hikari.Embed():
 
     return embed
 
+
 # ----------    BOT COMMANDS    ---------- #
 @plugin.command
 @lightbulb.command("book", "A list of books")
