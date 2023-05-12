@@ -43,4 +43,7 @@ if __name__ == '__main__':
 
     # ----------    RUN BOT & TASKS    ---------- #
     # refresh_coins.start()  # Comment out when testing new modules to prevent API usage
-    bot.run()
+    bot.run(
+        activity=hikari.Activity(
+            name=f"My Developer", type=hikari.ActivityType.WATCHING)
+    )
