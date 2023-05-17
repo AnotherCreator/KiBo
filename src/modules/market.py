@@ -54,6 +54,8 @@ This function is only used once and will instantiate all the coins within the Po
 This should not be run during bot start in bot.py
 Once the coin data has be initialized in the database, you can remove the function call and update_coins() will take over
 """
+
+
 def cache_coins():
     try:
         id_list = []
@@ -97,12 +99,15 @@ def cache_coins():
     except (ConnectionError, Timeout, TooManyRedirects) as e:
         print(e)
 
+
 """
 def update_coins():
 
 This function will just update all the coin values inside the database on a set interval defined within bot.py 
 refresh_coins() function
 """
+
+
 def update_coins():
     try:
         coin_response = session.get(api_data, params=coin_parameters)
@@ -123,7 +128,30 @@ def update_coins():
     except (ConnectionError, Timeout, TooManyRedirects) as e:
         print(e)
 
-# ----------    LOGGING HELPER FUNCTIONS  ---------- #
+
+# ----------    HELPER FUNCTIONS  ---------- #
+def db_entry_found(x: tuple) -> logger:
+    logger.info(f"Database entry found: {x[0], x[1], x[2], x[3], x[4], x[5]}")
+    pass
+
+
+def create_single_coin_embed(x: tuple) -> hikari.Embed():
+    embed = (
+        hikari.Embed(
+            title=f"${str(x[3])}"
+        )
+        .set_author(
+            name=f"{x[4]}. {x[1]} / {x[2]}",
+            icon=x[6]
+        )
+        .add_field(
+            "Daily % Change",
+            f"{x[5]:.2f}%",
+            inline=False
+        )
+    )
+
+    return embed
 
 
 # ----------    BOT COMMANDS    ---------- #
@@ -156,49 +184,22 @@ async def coin_rank(ctx: lightbulb.Context) -> None:
         for x in rows:
             # ID: x[0] || Name: x[1] || Symbol: x[2] || Price: x[3] || Rank: x[4] || Change: x[5] || Logo: x[6]
             if x[4] == coin_number:
-                logger.info(f"Database entry found: {x[0], x[1], x[2], x[3], x[4], x[5]}")
-                logger.info(f"Match found: (User input: {coin_number})(Database: {x[1]})")
-                embed = (
-                    hikari.Embed(
-                        title=f"${str(x[3])}"
-                    )
-                    .set_author(
-                        name=f"{x[4]}. {x[1]} / {x[2]}",
-                        icon=x[6]
-                    )
-                    .add_field(
-                        "Daily % Change",
-                        f"{x[5]:.2f}%",
-                        inline=False
-                    )
-                )
+                db_entry_found(x)  # Logger function
+                embed = create_single_coin_embed(x)
     if coin_name is not None:
         logger.info(f"User entered a coin name: {coin_name}")
 
         for x in rows:
             # ID: x[0] || Name: x[1] || Symbol: x[2] || Price: x[3] || Rank: x[4] || Change: x[5] || Logo: x[6]
             if x[1].lower() == coin_name.lower():
-                logger.info(f"Database entry found: {x[0], x[1], x[2], x[3], x[4], x[5]}")
-                logger.info(f"Match found: (User input: {coin_number})(Database: {x[1]})")
-                embed = (
-                    hikari.Embed(
-                        title=f"${str(x[3])}"
-                    )
-                    .set_author(
-                        name=f"{x[4]}. {x[1]} / {x[2]}",
-                        icon=x[6]
-                    )
-                    .add_field(
-                        "Daily % Change",
-                        f"{x[5]:.2f}%",
-                        inline=False
-                    )
-                )
+                db_entry_found(x)  # Logger function
+                embed = create_single_coin_embed(x)
     await ctx.respond(embed)
 
 
 @coins.child()  # Fetch top 10 coins respective to user input (50 ==> 40...50)
-@lightbulb.option("top", "Displays the top 10 coins of the respective rank", type=int, required=False, default=10)
+@lightbulb.option("top", "Displays the top 10 coins of the respective rank",
+                  type=int, required=False, default=10)
 @lightbulb.command("list", "Enter a coin rank")
 @lightbulb.implements(lightbulb.SlashSubCommand)
 async def coin_list(ctx: lightbulb.Context) -> None:
