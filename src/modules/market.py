@@ -174,6 +174,7 @@ async def coin_rank(ctx: lightbulb.Context) -> None:
     cur.execute("SELECT * FROM coin_info ORDER BY coin_rank asc")
     rows = cur.fetchall()
 
+    # Assign option values to variables
     coin_number = ctx.options.number
     coin_name = ctx.options.name
 
@@ -186,6 +187,7 @@ async def coin_rank(ctx: lightbulb.Context) -> None:
             if x[4] == coin_number:
                 db_entry_found(x)  # Logger function
                 embed = create_single_coin_embed(x)
+
     if coin_name is not None:
         logger.info(f"User entered a coin name: {coin_name}")
 
@@ -207,7 +209,9 @@ async def coin_list(ctx: lightbulb.Context) -> None:
     cur.execute('SELECT * FROM coin_info ORDER BY coin_rank asc')  # 1,2,3...,100
     rows = cur.fetchall()
 
+    # Assign option values to variables
     rank = ctx.options.top
+
     if rank < 11:
         current_min = 1
         current_max = 10
