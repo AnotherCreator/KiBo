@@ -18,7 +18,7 @@ tasks.load(bot)
 
 # ----------  LOAD EXTENSIONS   ---------- #
 # bot.load_extensions("modules.cat_facts")
-# bot.load_extensions("modules.help")
+bot.load_extensions("modules.help")
 bot.load_extensions("modules.market")
 bot.load_extensions("modules.dictionary")
 
