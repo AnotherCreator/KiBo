@@ -1,10 +1,9 @@
 import hikari
 import lightbulb
-import logging
+import src.constants as constants
 from PyDictionary import PyDictionary
 
 dictionary = PyDictionary()
-logger = logging.getLogger()
 
 # ----------    BOT OBJECTS    ---------- #
 plugin = lightbulb.Plugin("dictionary")  # Create plugin
@@ -56,7 +55,7 @@ async def use_dictionary(ctx: lightbulb.Context) -> None:
     embed = hikari.Embed()  # Instantiate embed obj
 
     if user_definition is not None:
-        logger.info(f"User definition: {user_definition}:{dictionary.meaning(user_definition)}")
+        constants.LOGGER.info(f"User definition: {user_definition}:{dictionary.meaning(user_definition)}")
         embed = create_dictionary_embed(user_definition, dictionary.meaning(user_definition))
 
     # if user_synonym is not None:

@@ -4,6 +4,7 @@ import lightbulb
 import logging
 import os
 import psycopg2 as psycopg2
+import src.constants as constants
 from requests import Session
 from requests.exceptions import ConnectionError, Timeout, TooManyRedirects
 
@@ -131,7 +132,7 @@ def update_coins():
 
 # ----------    HELPER FUNCTIONS  ---------- #
 def db_entry_found(x: tuple) -> logger:
-    logger.info(f"Database entry found: {x[0], x[1], x[2], x[3], x[4], x[5]}")
+    constants.LOGGER.info(f"Database entry found: {x[0], x[1], x[2], x[3], x[4], x[5]}")
     pass
 
 
@@ -180,7 +181,7 @@ async def coin_rank(ctx: lightbulb.Context) -> None:
 
     embed = hikari.Embed()
     if coin_number is not None:
-        logger.info(f"User entered a coin rank: {coin_number}")
+        constants.LOGGER.info(f"User entered a coin rank: {coin_number}")
 
         for x in rows:
             # ID: x[0] || Name: x[1] || Symbol: x[2] || Price: x[3] || Rank: x[4] || Change: x[5] || Logo: x[6]
@@ -189,7 +190,7 @@ async def coin_rank(ctx: lightbulb.Context) -> None:
                 embed = create_single_coin_embed(x)
 
     if coin_name is not None:
-        logger.info(f"User entered a coin name: {coin_name}")
+        constants.LOGGER.info(f"User entered a coin name: {coin_name}")
 
         for x in rows:
             # ID: x[0] || Name: x[1] || Symbol: x[2] || Price: x[3] || Rank: x[4] || Change: x[5] || Logo: x[6]
