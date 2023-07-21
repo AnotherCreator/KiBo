@@ -1,8 +1,10 @@
 import hikari
 import lightbulb
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
 import os
 from dotenvy import load_env, read_file
 from lightbulb.ext import tasks
+from src.modules.market import update_coins
 
 # ---------- LOAD ENV VARIABLES ---------- #
 load_env(read_file('.env'))
@@ -12,18 +14,21 @@ DEV_SERVER_ID = os.environ.get("DEV_SERVER_ID")
 # ---------- BOT INITIALIZATION ---------- #
 bot = lightbulb.BotApp(
     token=BOT_SECRET,
-    intents=hikari.Intents.ALL
+    intents=hikari.Intents.ALL,
+    ignore_bots=True
 )
-tasks.load(bot)
 
-# ----------  LOAD EXTENSIONS   ---------- #
-# bot.load_extensions("modules.cat_facts")
-bot.load_extensions("modules.help")
-bot.load_extensions("modules.market")
-bot.load_extensions("modules.dictionary")
 
-# Extensions must be loaded before importing from those specific modules
-from src.modules.market import update_coins
+@bot.listen(hikari.StartingEvent)
+async def on_starting(_: hikari.StartingEvent) -> None:
+    # This event fires once, while the BotApp is starting.
+    bot.d.sched = AsyncIOScheduler()
+    bot.d.sched.start()
+    bot.load_extensions("modules.daily")
+    # bot.load_extensions("modules.cat_facts")
+    bot.load_extensions("modules.help")
+    bot.load_extensions("modules.market")
+    bot.load_extensions("modules.dictionary")
 
 # ----------     MAIN LINE      ---------- #
 if __name__ == '__main__':
